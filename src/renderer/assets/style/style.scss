@@ -1,0 +1,81 @@
+body {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+}
+
+#app {
+  -webkit-app-region: drag;
+  background-color: white;
+  border-radius: 14px;
+  border: 1px solid rgba(180, 180, 180, 0.1);
+}
+.ps {
+  height: 750px;
+}
+.header {
+  border-bottom: 1px solid rgba(245, 245, 245, 0.1);
+}
+.information-booth {
+  border-bottom: 1px solid rgba(245, 245, 245, 0.1);
+}
+.information-booth.no-p .chartjs-data {
+  height: 250px;
+}
+.information-booth.no-p .chartjs-data canvas {
+  height: 250px !important;
+}
+.navigation {
+  border-radius: 12px;
+  border-left: 1px solid rgba(245, 245, 245, 0.1);
+}
+
+.clickable {
+  -webkit-app-region: no-drag;
+  -webkit-user-select: none;
+}
+
+.titlebar {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.fullscreen-bg__video {
+  position: fixed;
+  right: 10px;
+  left: 10px;
+  bottom: 0;
+  min-width: 98%;
+  min-height: 100%;
+  border-radius: 14px;
+}
+.main .video-container .overlay {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 14px;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(28, 28, 28, 1),
+    rgba(28, 28, 28, 0.6)
+  );
+}
+
+.main .divider {
+  border-bottom: 1px solid rgba(245, 245, 245, 0.3);
+}
+
+.pac-container {
+  width: theme("w-full");
+  font-family: "Raleway", sans-serif;
+  -webkit-app-region: no-drag;
+}
+.pac-container::after {
+  background-image: none !important;
+  height: 0px;
+}
+.pac-container .pac-item {
+  padding: theme("p-2");
+}
