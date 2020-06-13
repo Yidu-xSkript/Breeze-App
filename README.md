@@ -1,6 +1,6 @@
 # breezeapp
 
-> BreezeApp is a weather app created just for fun - VueJs, vuex and Electron
+> BreezeApp is a weather app created just for fun - VueJs, vuex, Electron and Tailwind
 
 #### Build Setup
 
