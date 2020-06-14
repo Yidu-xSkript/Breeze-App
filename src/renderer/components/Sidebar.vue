@@ -1,15 +1,23 @@
 <template>
   <div
-    class="navigation bg-grey-darkest w-128 border-white text-white fixed min-h-screen inset-y-0 right-0 pt-8"
+    class="navigation bg-grey-darkest w-128 border-white text-white fixed min-h-screen inset-y-0 right-0"
   >
+    <div class="pb-8">
+      <ul class="flex justify-end">
+        <li>
+          <div ref="minimize" class="clickable text-white hover:bg-grey-light-op hover:text-white px-5 text-3xl">-</div>
+        </li>
+        <li>
+          <div ref="close" class="clickable text-white hover:bg-red-light hover:text-white px-5 text-3xl" style="border-top-right-radius: 14px;">&times;</div>
+        </li>
+      </ul>
+    </div>
     <weather-modal></weather-modal>
     <div class="header pl-8 pr-8 pb-8">
       <div class="flex justify-between">
         <div>
           <span class="text-gray-500">Location</span> |
-          <span
-            class="font-semibold text-base"
-          >{{ userCurrentSelectedLocation }}</span>
+          <span class="font-semibold text-base">{{ userCurrentSelectedLocation }}</span>
         </div>
         <div>
           <button
@@ -99,7 +107,7 @@
           <line-chart :chart-data="datacollection" :options="chartOptions"></line-chart>
         </div>
       </div>
-      <div class="information-booth pl-8 pr-8 pb-8 pt-8">
+      <div class="information-booth pl-8 pr-8 pb-16 pt-8">
         <div class="grid grid-cols-1 pb-5">
           <h3 class="font-semibold">Next Days</h3>
         </div>
@@ -123,6 +131,7 @@ import LineChart from "../helpers/LineChart";
 import { PerfectScrollbar } from "vue2-perfect-scrollbar";
 import WeatherModal from "./WeatherModal.vue";
 import { mapGetters } from "vuex";
+const { remote } = require("electron");
 export default {
   components: {
     LineChart,
@@ -222,8 +231,17 @@ export default {
     this.userCurrentSelectedLocation = this.getLocationInfo;
     this.dataDismantling();
     this.fillData();
+    this.screenContext();
   },
   methods: {
+    screenContext() {
+      this.$refs.minimize.addEventListener("click", () => {
+        remote.getCurrentWindow().minimize();
+      });
+      this.$refs.close.addEventListener("click", () => {
+        remote.app.quit();
+      });
+    },
     convertSpeed(val) {
       return Math.round(val * 3.6);
     },

@@ -16,13 +16,19 @@ export default new Vuex.Store({
     now: new Date(),
     exactlyNow: new Date(),
     graphLabels: [],
-    graphDatasets: []
+    graphDatasets: [],
+    online: false
   },
   actions: {
     updateTime({ commit }) {
       setInterval(() => {
         commit('setNow', new Date())
       }, 1000 * 600)
+    },
+    updateNetwork({ commit }) {
+      // setInterval(() => {
+        // api.testConnection()
+      // }, 1000 * 6)
     },
     updateExactlyNow({ commit }) {
       setInterval(() => {
@@ -125,10 +131,16 @@ export default new Vuex.Store({
     getGraphDatasets(state) {
       return state.graphDatasets;
     },
+    getNetwork(state) {
+      return state.online;
+    }
   },
   mutations: {
     setNow(state, payLoad) {
       state.now = payLoad;
+    },
+    setNetwork(state, payLoad) {
+      state.online = payLoad
     },
     setExactlyNow(state, payLoad) {
       state.exactlyNow = payLoad;

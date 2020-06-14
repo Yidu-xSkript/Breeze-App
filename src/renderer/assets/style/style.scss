@@ -4,8 +4,7 @@ body {
 }
 
 #app {
-  -webkit-app-region: drag;
-  background-color: white;
+  background-color: rgb(28, 28, 28);
   border-radius: 14px;
   border: 1px solid rgba(180, 180, 180, 0.1);
 }
@@ -34,6 +33,11 @@ body {
   -webkit-user-select: none;
 }
 
+#baseLayout {
+  -webkit-app-region: drag !important;
+  -webkit-user-select: none;
+}
+
 .titlebar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
@@ -59,7 +63,7 @@ body {
   background: linear-gradient(
     to right,
     rgba(28, 28, 28, 1),
-    rgba(28, 28, 28, 0.6)
+    rgba(28, 28, 28, 0.4)
   );
 }
 

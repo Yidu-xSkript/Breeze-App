@@ -1,5 +1,4 @@
-import Axios from "axios";
-
+import Axios from 'axios';
 const weatherURL = 'https://api.openweathermap.org/data/2.5';
 const appKey = '6821702d03303a2510a16c962b4b3187';
 const iconURL = "https://openweathermap.org/img/wn/";
@@ -10,76 +9,82 @@ export default {
     setupIconURL(imgName) {
         return iconURL + imgName;
     },
-    createStatement(weatherId) {
+    identifyNycthemeron(icon) {
+        var date = icon.split(/([0-9]+)/)
+        console.log(date)
+        return date[2];
+    },
+    createStatement(weatherId, icon) {
         var statement = {
             motto: "",
             video: "",
-            dayStatus: ""
+            dayStatus: "",
         }
+        var nycthemeron = this.identifyNycthemeron(icon);
         if (weatherId >= 200 && weatherId <= 232) {
-            statement.motto = "When thunder roars, go indoors!"
+            statement.motto = "When thunder roars, stay indoors!"
             statement.video = `${__dirname}/../assets/video/thunderstorm.mp4`
-            statement.dayStatus = "stormy"
+            statement.dayStatus = nycthemeron == 'n' ? "stormy night" : "stormy day"
         } // Thunderstorm
         else if (weatherId >= 300 && weatherId <= 504) {
-            statement.motto = "Don't forget an umbrella"
+            statement.motto = nycthemeron == 'n' ? "Listen to some Jazz" : "Don't forget an umbrella"
             statement.video = `${__dirname}/../assets/video/rain.mp4`
-            statement.dayStatus = "rainy"
+            statement.dayStatus = nycthemeron == 'n' ? "rainy night" : "rainy day"
         } // Rain
         else if (weatherId == 511) {
-            statement.motto = "Stay off the road"
+            statement.motto = nycthemeron == 'n' ? "Go to sleep" : "Stay off the road"
             statement.video = `${__dirname}/../assets/video/rain.mp4`
-            statement.dayStatus = "freezing rainy"
+            statement.dayStatus = nycthemeron == 'n' ? "freezing rainy night" : "freezing raindy day"
         } // Freezing rain
         else if (weatherId >= 520 && weatherId <= 531) {
-            statement.motto = "Don't forget an umbrella or just stay home"
+            statement.motto = nycthemeron == 'n' ? "wear something warm" : "Don't forget an umbrella or just stay home"
             statement.video = `${__dirname}/../assets/video/rain.mp4`
-            statement.dayStatus = "rainy"
+            statement.dayStatus = nycthemeron == 'n' ? "rainy night" : "rainy day"
         } // Shower Rain
         else if (weatherId >= 600 && weatherId <= 613) {
-            statement.motto = "Don't forget an umbrella or just wear a coat"
+            statement.motto = nycthemeron == 'n' ? "wear something warm" : "Don't forget an umbrella or just wear a coat"
             statement.video = `${__dirname}/../assets/video/snow.mp4`
-            statement.dayStatus = "snowy"
+            statement.dayStatus = nycthemeron == 'n' ? "snowy night" : "snowy day"
         } // Snow
         else if (weatherId >= 615 && weatherId <= 622) {
-            statement.motto = "Don't forget an umbrella and also wear a coat"
+            statement.motto = nycthemeron == 'n' ? "Listen to some Jazz" : "Don't forget an umbrella and also wear a coat"
             statement.video = `${__dirname}/../assets/video/rain_and_snow.mp3`
-            statement.dayStatus = "rainy and snowy"
+            statement.dayStatus = nycthemeron == 'n' ? "rainy and snowy night" : "rainy and snowy day"
         } // Rain and Snow
         else if (weatherId >= 700 && weatherId <= 771) {
             statement.motto = "The Atmosphere is harsh, stay indoors"
             statement.video = `${__dirname}/../assets/video/atmosphere.mp4`
-            statement.dayStatus = "harsh"
+            statement.dayStatus = nycthemeron == 'n' ? "harsh night" : "harsh day"
         } // Atmosphere | smoke
         else if (weatherId == 781) {
             statement.motto = "Evacuate Immediately"
             statement.video = `${__dirname}/../assets/video/tornado.mp4`
-            statement.dayStatus = "terrible"
+            statement.dayStatus = nycthemeron == 'n' ? "terrible night" : "terrible day"
         } // Tornado
         else if (weatherId == 800) {
-            statement.motto = "It's beautiful out there, Enjoy!"
+            statement.motto = "It's a beautiful weather, Enjoy!"
             statement.video = `${__dirname}/../assets/video/clear_sky.mp4`
-            statement.dayStatus = "sunny"
+            statement.dayStatus = nycthemeron == 'n' ? "Clear Night" : "Sunny day"
         } // Clear
         else if (weatherId == 801) {
             statement.motto = "It's a nice weather! Relax"
             statement.video = `${__dirname}/../assets/video/clouds.mp4`
-            statement.dayStatus = "sunny and cloudy"
+            statement.dayStatus = nycthemeron == 'n' ? "Beautiful and Cloudy night" : "sunny and cloudy day"
         } // Few Clouds
         else if (weatherId == 802) {
-            statement.motto = "Awesome for a walk outside"
+            statement.motto = nycthemeron == 'n' ? "Sleep tight" : "Awesome for a walk outside"
             statement.video = `${__dirname}/../assets/video/clouds.mp4`
-            statement.dayStatus = "cloudy"
+            statement.dayStatus = nycthemeron == 'n' ? "cloudy night" : "cloudy day"
         } // Scattered Clouds
         else if (weatherId == 803) {
-            statement.motto = "you might wanna wear a jacket"
+            statement.motto = "you might wanna wear something a little warm"
             statement.video = `${__dirname}/../assets/video/clouds.mp4`
-            statement.dayStatus = "cloudy"
+            statement.dayStatus = nycthemeron == 'n' ? "little bit of a cloudy night" : "a little crowded cloudy day"
         } // Broken Clouds
         else if (weatherId == 804) {
             statement.motto = "It might rain any moment now!"
             statement.video = `${__dirname}/../assets/video/clouds.mp4`
-            statement.dayStatus = "heavily cloudy"
+            statement.dayStatus = nycthemeron == 'n' ? "heavily cloudy night" : "heavily cloudy day"
         } // Overcast Clouds
         return statement
     },
@@ -168,8 +173,8 @@ export default {
         var splitAllDate = date.split(" ");
         var splitDate = splitAllDate[0].split('-');
         var splitTime = splitAllDate[1].split(':');
-
-        return new Date(splitDate[0], splitDate[1], splitDate[2], splitTime[0], splitTime[1], splitTime[2]);
+        var formattedDate = new Date(splitDate[0], splitDate[1] - 1, splitDate[2], splitTime[0], splitTime[1], splitTime[2], 0);
+        return formattedDate
     },
     calculateTimeDifference(now, forecastDate) {
         var nowTime = now.getTime();
@@ -179,32 +184,12 @@ export default {
         }
         if (forecastTime < nowTime) var diff = nowTime - forecastTime;
         else var diff = forecastTime - nowTime;
-
-        var minDiff = Math.floor(diff / 1000 / 60)
-
-        console.log("Time Difference", minDiff)
+        var minDiff = Math.round(diff / 1000 / 60)
         return minDiff;
     },
-    // filterObject(obj, predicate) {
-    //     var dataKey = '';
-    //     var filterSequence = Object.assign(...Object.keys(obj)
-    //         .filter(key => predicate(obj[key]))
-    //         .map(key => ({ [key]: obj[key] })));
-    //     for (var property in filterSequence) {
-    //         if (!filterSequence.hasOwnProperty(property)) {
-    //             return filterSequence
-    //         }
-    //         dataKey = property
-    //     }
-    //     return dataKey
-    // },
     async minValFromObject(object) {
         return new Promise(resolve => {
-            // var listOfValue = Object.values(object);
-            // var minValueFromObject = Math.min.apply(null, listOfValue);
-            // var filteredObject = this.filterObject(object, obj => obj == minValueFromObject);
             var [lowestItems] = Object.entries(object).sort(([k1, v1], [k2, v2]) => v1 - v2);
-            // console.log(filteredObject)
             resolve(lowestItems);
         })
     },
@@ -229,11 +214,12 @@ export default {
         });
     },
     testConnection() {
-        Axios.get('https://www.google.com').then(response => {
-
-        }).catch(err => {
-
-        })
+        Axios.get('https://img.icons8.com/material/24/000000/folder-invoices--v1.png')
+            .then(response => {
+                // if (response.status >= 200 && response.status < 304) store.commit('setNetwork', true);
+            }).catch(err => {
+                // store.commit('setNetwork', false)
+            })
     },
     convertDateAndTime(date = new Date()) {
         const year = date.getFullYear();

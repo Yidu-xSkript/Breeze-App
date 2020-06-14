@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="video-container">
-      <video ref="videoRef" loop muted autoplay class="fullscreen-bg__video">
+      <video ref="videoRef" loop muted autoplay class="titlebar fullscreen-bg__video">
         <source src type="video/mp4" />
       </video>
       <div class="overlay"></div>
@@ -22,7 +22,7 @@
             <p
               class="bg-white font-bold text-black w-48 p-2 text-xl rounded has-shadow"
             >{{ selectedWeather.weather[0].description }}</p>
-            <p class="font-semibold text-white text-4xl">It's a {{ statement.dayStatus }} day</p>
+            <p class="font-semibold text-white text-4xl">It's a {{ statement.dayStatus }}</p>
             <p class="font-light text-white text-2xl">{{ statement.motto }}</p>
           </div>
         </div>
@@ -66,25 +66,28 @@ export default {
     ...mapGetters({
       getTodaySelectedWeatherDetail: "getTodaySelectedWeatherDetail",
       getLocationInfo: "getLocationInfo",
-      getExactlyNow: "getExactlyNow"
+      getExactlyNow: "getExactlyNow",
+      getNetwork: "getNetwork"
     })
   },
   watch: {
     getExactlyNow(val) {
       this.currentDate = api.convertDateAndTime(val);
     },
+    getNetwork(val) {
+      console.log("This is the value of network -------", val)
+    },
     getTodaySelectedWeatherDetail(val) {
       this.selectedWeather = val;
       this.iconURL = api.setupIconURL(val.weather[0].icon) + ".png";
-      this.statement.motto = api.createStatement(val.weather[0].id).motto;
+      this.statement.motto = this._statement(val.weather[0]).motto;
       this.$nextTick(() => {
-        this.$refs.videoRef.src = api.createStatement(
-          this.getTodaySelectedWeatherDetail.weather[0].id
-        ).video;
+        this.$refs.videoRef.src = this._statement(val.weather[0]).video;
         this.$refs.videoRef.play();
       });
-      this.statement.dayStatus = api.createStatement(
-        val.weather[0].id
+      this.statement.dayStatus = this._statement(
+        val.weather[0].id,
+        val.weather[0].icon
       ).dayStatus;
     },
     getLocationInfo(val) {
@@ -103,24 +106,37 @@ export default {
     showWeatherModal() {
       this.$modal.show("weather-modal");
     },
-    setSelectedWeather() {
-      this.selectedWeather = this.getTodaySelectedWeatherDetail;
+    setIcon() {
       this.iconURL =
         api.setupIconURL(this.getTodaySelectedWeatherDetail.weather[0].icon) +
         ".png";
-      this.statement.motto = api.createStatement(
-        this.getTodaySelectedWeatherDetail.weather[0].id
-      ).motto;
+    },
+    setVideo() {
       this.$nextTick(() => {
-        this.$refs.videoRef.src = api.createStatement(
-          this.getTodaySelectedWeatherDetail.weather[0].id
-        ).video;
+        this.$refs.videoRef.src = this._statement().video;
         this.$refs.videoRef.play();
       });
-
-      this.statement.dayStatus = api.createStatement(
-        this.getTodaySelectedWeatherDetail.weather[0].id
-      ).dayStatus;
+    },
+    isEmpty(obj) {
+      for (var key in obj) {
+        if (this.hasOwnProperty(key)) return false;
+      }
+      return true;
+    },
+    _statement(val = {}) {
+      return this.isEmpty(val)
+        ? api.createStatement(
+            this.getTodaySelectedWeatherDetail.weather[0].id,
+            this.getTodaySelectedWeatherDetail.weather[0].icon
+          )
+        : api.createStatement(val.id, val.icon);
+    },
+    setSelectedWeather() {
+      this.selectedWeather = this.getTodaySelectedWeatherDetail;
+      this.setIcon();
+      this.setVideo();
+      this.statement.motto = this._statement().motto;
+      this.statement.dayStatus = this._statement().dayStatus;
     }
   }
 };

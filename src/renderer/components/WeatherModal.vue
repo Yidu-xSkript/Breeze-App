@@ -2,11 +2,11 @@
   <modal classes="bg-grey-darkest rounded-lg shadow-2xl" height="auto" name="weather-modal">
     <div class="modal w-full h-full p-10 flex items-start justify-center">
       <form class="w-full clickable" @submit.prevent="getWeatherData">
-        <div class="flex items-center border-b border-b-2 border-gray-800 py-2">
+        <div class="flex items-center border-none py-2">
           <vue-google-autocomplete
             id="map"
             class="clickable font-semibold appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
-            placeholder="Search Place"
+            placeholder="Search Location"
             types="geocode"
             v-on:placechanged="getAddressData"
           ></vue-google-autocomplete>
@@ -43,13 +43,20 @@ export default {
       lng: null,
       disabled: true,
       isLoading: false,
-      now: new Date()
+      now: new Date(),
+      network: ""
     };
   },
   created() {
     this.setLocation();
+    if (this.network == "online") this.getWeatherData();
   },
   watch: {
+    getNetwork(val) {
+      this.network = val;
+      this.getWeatherData()
+      console.log(val)
+    },
     async getNow(val) {
       this.now = val;
       await this.getWeatherData();
@@ -80,7 +87,8 @@ export default {
       getUserCurrentLocation: "getUserCurrentLocation",
       getReactiveCurrentWeatherForecast: "getReactiveCurrentWeatherForecast",
       getNow: "getNow",
-      getLocationInfo: "getLocationInfo"
+      getLocationInfo: "getLocationInfo",
+      getNetwork: "getNetwork"
     })
   },
   methods: {

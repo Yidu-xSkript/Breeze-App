@@ -1,20 +1,22 @@
 <template>
   <div id="app" class="flex min-h-screen">
-    <router-view></router-view>
-    <sidebar></sidebar>
+    <component :is="layout"></component>
   </div>
 </template>
 
 <script>
-import sidebar from "./components/Sidebar";
+const default_layout = "default";
 export default {
   name: "BreezeApp",
-  components: {
-    sidebar
-  },
   mounted() {
+    // this.$store.dispatch("updateNetwork");
     this.$store.dispatch("updateTime");
     this.$store.dispatch("updateExactlyNow");
+  },
+  computed: {
+    layout() {
+      return (this.$route.meta.layout || default_layout) + "-layout";
+    }
   }
 };
 </script>

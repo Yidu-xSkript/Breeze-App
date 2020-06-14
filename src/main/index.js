@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron'
-import '../renderer/store'
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -8,10 +8,13 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
+let mainWindow, splashScreen
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+const splashURL = process.env.NODE_ENV === 'development'
+  ? `http://localhost:9080/#/splash`
+  : `file://${__dirname}/index.html#splash`
 
 function createWindow() {
   /**
@@ -23,6 +26,17 @@ function createWindow() {
     titleBarStyle: 'hidden',
     transparent: true,
     frame: false,
+    resizable: false,
+    show: false,
+    maximizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true
+    }
+  })
+
+  splashScreen = new BrowserWindow({
+    resizable: false, width: 700, maximizable: false, height: 350, transparent: true, frame: false, alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true
@@ -30,6 +44,12 @@ function createWindow() {
   })
 
   mainWindow.loadURL(winURL)
+  splashScreen.loadURL(splashURL)
+
+  mainWindow.once('ready-to-show', () => {
+    splashScreen.destroy();
+    if (splashScreen.isDestroyed) mainWindow.show();
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null
