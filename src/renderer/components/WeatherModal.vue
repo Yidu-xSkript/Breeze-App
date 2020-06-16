@@ -1,40 +1,47 @@
 <template>
-  <modal classes="bg-grey-darkest rounded-lg shadow-2xl" height="auto" name="weather-modal">
-    <div class="modal w-full h-full p-10 flex items-start justify-center">
-      <form class="w-full clickable" @submit.prevent="getWeatherData">
-        <div class="flex items-center border-none py-2">
-          <vue-google-autocomplete
-            id="map"
-            class="clickable font-semibold appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
-            placeholder="Search Location"
-            types="geocode"
-            v-on:placechanged="getAddressData"
-          ></vue-google-autocomplete>
-          <button
-            class="clickable flex-shrink-0 text-black font-semibold text-xs py-1 px-5 border border-gray-700 rounded focus:outline-none"
-            v-bind:class="{'opacity-50 cursor-not-allowed': disabled, 'bg-transparent': isLoading, 'bg-white': !isLoading}"
-            type="submit"
-            :disabled="disabled"
-          >
-            <span v-if="!isLoading">Select</span>
-            <span v-else>
-              <img src="../assets/svg-loaders/oval.svg" width="20" alt />
-            </span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </modal>
+  <div>
+    <connection-modal></connection-modal>
+
+    <modal classes="bg-grey-darkest rounded-lg shadow-2xl" height="auto" name="weather-modal">
+      <div class="modal w-full h-full p-10 flex items-start justify-center">
+        <form class="w-full clickable" @submit.prevent="getWeatherData">
+          <div class="flex items-center border-none py-2">
+            <vue-google-autocomplete
+              id="map"
+              class="clickable font-semibold appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              placeholder="Search Location"
+              types="geocode"
+              v-on:placechanged="getAddressData"
+            ></vue-google-autocomplete>
+            <button
+              class="clickable flex-shrink-0 text-black font-semibold text-xs py-1 px-5 border border-gray-700 rounded focus:outline-none"
+              v-bind:class="{'opacity-50 cursor-not-allowed': disabled, 'bg-transparent': isLoading, 'bg-white': !isLoading}"
+              type="submit"
+              :disabled="disabled"
+            >
+              <span v-if="!isLoading">Select</span>
+              <span v-else>
+                <img src="../assets/svg-loaders/oval.svg" width="20" alt />
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </modal>
+  </div>
 </template>
 
 <script>
 import VueGoogleAutocomplete from "vue-google-autocomplete/src/VueGoogleAutocomplete";
 import { mapActions, mapGetters } from "vuex";
 import api from "../helpers/api";
+import ConnectionModal from "./ConnectionModal";
+
 export default {
   name: "WeatherModal",
   components: {
-    VueGoogleAutocomplete
+    VueGoogleAutocomplete,
+    ConnectionModal
   },
   data() {
     return {
@@ -43,20 +50,14 @@ export default {
       lng: null,
       disabled: true,
       isLoading: false,
-      now: new Date(),
-      network: ""
+      now: new Date()
     };
   },
   created() {
     this.setLocation();
-    if (this.network == "online") this.getWeatherData();
+    this.getWeatherData();
   },
   watch: {
-    getNetwork(val) {
-      this.network = val;
-      this.getWeatherData()
-      console.log(val)
-    },
     async getNow(val) {
       this.now = val;
       await this.getWeatherData();
@@ -87,8 +88,7 @@ export default {
       getUserCurrentLocation: "getUserCurrentLocation",
       getReactiveCurrentWeatherForecast: "getReactiveCurrentWeatherForecast",
       getNow: "getNow",
-      getLocationInfo: "getLocationInfo",
-      getNetwork: "getNetwork"
+      getLocationInfo: "getLocationInfo"
     })
   },
   methods: {
@@ -133,37 +133,48 @@ export default {
         weatherForTheNextDays: _weatherForTheNextDays
       });
     },
-    async getWeatherData() {
-      console.log('new')
-      this.isLoading = true;
+    getWeatherData() {
       const apiPath = api.setupWeatherURLByCoordinates(this.lat, this.lng);
-      await this.weatherInformation({
-        apiPath: apiPath
-      })
-        .then(async response => {
-          var todaysWeather = [];
-          var weatherForTheNextDays = [];
-          this.isLoading = false;
-          await this.setAddress(this.address);
-          await api
-            .getWeatherForTheNextDays(response.data.list)
-            .then(response => {
-              weatherForTheNextDays = response;
+      var that = this;
+      api
+        .isConnected()
+        .then(function() {
+          that.isLoading = true;
+          that
+            .weatherInformation({
+              apiPath: apiPath
+            })
+            .then(async response => {
+              var todaysWeather = [];
+              var weatherForTheNextDays = [];
+              that.isLoading = false;
+              await that.setAddress(that.address);
+              await api
+                .getWeatherForTheNextDays(response.data.list)
+                .then(response => {
+                  weatherForTheNextDays = response;
+                });
+              await api
+                .getWeatherForToday(response.data.list)
+                .then(response => {
+                  todaysWeather = response;
+                });
+              await that.graphDataDismantling(todaysWeather);
+              await that.setWeatherDetailAction(
+                todaysWeather,
+                weatherForTheNextDays
+              );
+              that.$modal.hide("weather-modal");
+              that.disabled = true;
+            })
+            .catch(err => {
+              that.disabled = false;
+              console.log(err);
             });
-          await api.getWeatherForToday(response.data.list).then(response => {
-            todaysWeather = response;
-          });
-          await this.graphDataDismantling(todaysWeather);
-          await this.setWeatherDetailAction(
-            todaysWeather,
-            weatherForTheNextDays
-          );
-          this.$modal.hide("weather-modal");
-          this.disabled = true;
         })
         .catch(err => {
-          this.disabled = false;
           console.log(err);
+          this.$modal.show("connection-modal");
         });
     }
   }

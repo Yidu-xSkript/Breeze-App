@@ -67,15 +67,11 @@ export default {
       getTodaySelectedWeatherDetail: "getTodaySelectedWeatherDetail",
       getLocationInfo: "getLocationInfo",
       getExactlyNow: "getExactlyNow",
-      getNetwork: "getNetwork"
     })
   },
   watch: {
     getExactlyNow(val) {
       this.currentDate = api.convertDateAndTime(val);
-    },
-    getNetwork(val) {
-      console.log("This is the value of network -------", val)
     },
     getTodaySelectedWeatherDetail(val) {
       this.selectedWeather = val;

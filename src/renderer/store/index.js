@@ -17,18 +17,12 @@ export default new Vuex.Store({
     exactlyNow: new Date(),
     graphLabels: [],
     graphDatasets: [],
-    online: false
   },
   actions: {
     updateTime({ commit }) {
       setInterval(() => {
         commit('setNow', new Date())
       }, 1000 * 600)
-    },
-    updateNetwork({ commit }) {
-      // setInterval(() => {
-        // api.testConnection()
-      // }, 1000 * 6)
     },
     updateExactlyNow({ commit }) {
       setInterval(() => {
@@ -79,26 +73,26 @@ export default new Vuex.Store({
         resolve(true)
       })
     },
-    async triggerCurrentLocation({ commit }) {
-      return new Promise((resolve, reject) => {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            position => {
-              console.log(position.coords.latitude);
-              console.log(position.coords.longitude);
-              commit('setUserCurrentLocation', { lat: position.coords.latitude, lng: position.coords.longitude });
-              resolve(true)
-            },
-            error => {
-              console.log(error.message);
-              reject("an error has occured!")
-            },
-          )
-        } else {
-          console.log('geolocation IS NOT available on your browser');
-        }
-      });
-    }
+    // async triggerCurrentLocation({ commit }) {
+    //   return new Promise((resolve, reject) => {
+    //     if ("geolocation" in navigator) {
+    //       navigator.geolocation.getCurrentPosition(
+    //         position => {
+    //           console.log(position.coords.latitude);
+    //           console.log(position.coords.longitude);
+    //           commit('setUserCurrentLocation', { lat: position.coords.latitude, lng: position.coords.longitude });
+    //           resolve(true)
+    //         },
+    //         error => {
+    //           console.log(error.message);
+    //           reject("an error has occured!")
+    //         },
+    //       )
+    //     } else {
+    //       console.log('geolocation IS NOT available on your browser');
+    //     }
+    //   });
+    // }
   },
   getters: {
     getUserCurrentLocation(state) {
@@ -131,16 +125,10 @@ export default new Vuex.Store({
     getGraphDatasets(state) {
       return state.graphDatasets;
     },
-    getNetwork(state) {
-      return state.online;
-    }
   },
   mutations: {
     setNow(state, payLoad) {
       state.now = payLoad;
-    },
-    setNetwork(state, payLoad) {
-      state.online = payLoad
     },
     setExactlyNow(state, payLoad) {
       state.exactlyNow = payLoad;

@@ -9,7 +9,6 @@ const default_layout = "default";
 export default {
   name: "BreezeApp",
   mounted() {
-    // this.$store.dispatch("updateNetwork");
     this.$store.dispatch("updateTime");
     this.$store.dispatch("updateExactlyNow");
   },
@@ -17,7 +16,7 @@ export default {
     layout() {
       return (this.$route.meta.layout || default_layout) + "-layout";
     }
-  }
+  },
 };
 </script>
 

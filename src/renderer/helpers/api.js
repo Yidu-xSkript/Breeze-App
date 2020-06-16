@@ -1,4 +1,9 @@
-import Axios from 'axios';
+// import Axios from 'axios';
+import store from '../store';
+// const checkInternetConnected = require('check-internet-connected');
+const internetAvailable = require("internet-available");
+
+
 const weatherURL = 'https://api.openweathermap.org/data/2.5';
 const appKey = '6821702d03303a2510a16c962b4b3187';
 const iconURL = "https://openweathermap.org/img/wn/";
@@ -213,13 +218,11 @@ export default {
             resolve(selectedWeather[0])
         });
     },
-    testConnection() {
-        Axios.get('https://img.icons8.com/material/24/000000/folder-invoices--v1.png')
-            .then(response => {
-                // if (response.status >= 200 && response.status < 304) store.commit('setNetwork', true);
-            }).catch(err => {
-                // store.commit('setNetwork', false)
-            })
+    async isConnected() {
+        return await internetAvailable({
+            timeout: 4000,
+            retries: 10,
+        });
     },
     convertDateAndTime(date = new Date()) {
         const year = date.getFullYear();

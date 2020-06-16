@@ -1,5 +1,4 @@
 import { app, BrowserWindow } from 'electron'
-
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -42,13 +41,15 @@ function createWindow() {
       nodeIntegrationInWorker: true
     }
   })
-
+  
   mainWindow.loadURL(winURL)
   splashScreen.loadURL(splashURL)
 
   mainWindow.once('ready-to-show', () => {
-    splashScreen.destroy();
-    if (splashScreen.isDestroyed) mainWindow.show();
+    setTimeout(() => {
+      splashScreen.destroy();
+      if (splashScreen.isDestroyed) mainWindow.show();
+    }, 4000)
   });
 
   mainWindow.on('closed', () => {
@@ -69,6 +70,8 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+
 
 /**
  * Auto Updater
