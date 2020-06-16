@@ -11,6 +11,7 @@
               class="clickable font-semibold appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none"
               placeholder="Search Location"
               types="geocode"
+              v-on:focus="googleAutoCompleteFocused"
               v-on:placechanged="getAddressData"
             ></vue-google-autocomplete>
             <button
@@ -101,6 +102,13 @@ export default {
         "setTodaySelectedWeatherDetail_Action",
       setGraphOptions: "setGraphOptions"
     }),
+    googleAutoCompleteFocused() {
+      api.isConnected().then().catch(err => {
+        console.log(err)
+        this.$modal.hide('weather-modal')
+        this.$modal.show('connection-modal')
+      })
+    },
     setLocation() {
       this.lat = this.getUserCurrentLocation.lat;
       this.lng = this.getUserCurrentLocation.lng;
@@ -136,10 +144,10 @@ export default {
     getWeatherData() {
       const apiPath = api.setupWeatherURLByCoordinates(this.lat, this.lng);
       var that = this;
+      this.isLoading = true;
       api
         .isConnected()
         .then(function() {
-          that.isLoading = true;
           that
             .weatherInformation({
               apiPath: apiPath
@@ -168,11 +176,13 @@ export default {
               that.disabled = true;
             })
             .catch(err => {
+              that.isLoading = false;
               that.disabled = false;
               console.log(err);
             });
         })
         .catch(err => {
+          that.isLoading = false;
           console.log(err);
           this.$modal.show("connection-modal");
         });

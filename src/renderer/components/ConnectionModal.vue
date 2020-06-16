@@ -1,5 +1,5 @@
 <template>
-  <modal classes="bg-grey-darkest rounded-lg shadow-2xl p-5" height="auto" name="connection-modal">
+  <modal classes="bg-grey-darkest rounded-lg shadow-2xl p-5 animate__bounceIn" height="auto" name="connection-modal">
     <div class="grid col-span-1">
       <div class="flex justify-center">
         <svg
