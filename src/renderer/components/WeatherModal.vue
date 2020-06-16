@@ -86,28 +86,31 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getUserCurrentLocation: "getUserCurrentLocation",
-      getReactiveCurrentWeatherForecast: "getReactiveCurrentWeatherForecast",
-      getNow: "getNow",
-      getLocationInfo: "getLocationInfo"
+      getUserCurrentLocation: "weather/getUserCurrentLocation",
+      getReactiveCurrentWeatherForecast:
+        "weather/getReactiveCurrentWeatherForecast",
+      getNow: "weather/getNow",
+      getLocationInfo: "weather/getLocationInfo"
     })
   },
   methods: {
     ...mapActions({
-      setCoordinates: "setCoordinates",
-      setAddress: "setAddress",
-      weatherInformation: "weatherInformation",
-      setWeatherDetail: "setWeatherDetail",
+      setCoordinates: "weather/setCoordinates",
+      setAddress: "weather/setAddress",
+      weatherInformation: "weather/weatherInformation",
+      setWeatherDetail: "weather/setWeatherDetail",
       setTodaySelectedWeatherDetail_Action:
-        "setTodaySelectedWeatherDetail_Action",
-      setGraphOptions: "setGraphOptions"
+        "weather/setTodaySelectedWeatherDetail_Action",
+      setGraphOptions: "weather/setGraphOptions"
     }),
     googleAutoCompleteFocused() {
-      api.isConnected().then().catch(err => {
-        console.log(err)
-        this.$modal.hide('weather-modal')
-        this.$modal.show('connection-modal')
-      })
+      api
+        .isConnected()
+        .then()
+        .catch(err => {
+          this.$modal.hide("weather-modal");
+          this.$modal.show("connection-modal");
+        });
     },
     setLocation() {
       this.lat = this.getUserCurrentLocation.lat;
@@ -178,12 +181,10 @@ export default {
             .catch(err => {
               that.isLoading = false;
               that.disabled = false;
-              console.log(err);
             });
         })
         .catch(err => {
           that.isLoading = false;
-          console.log(err);
           this.$modal.show("connection-modal");
         });
     }

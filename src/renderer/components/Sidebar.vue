@@ -145,7 +145,6 @@ export default {
       userCurrentSelectedLocation: {},
       todaysSelectedWeatherDetail: {},
       datacollection: {},
-      // to be continued tmrw
       graphLabels: [],
       graphDatasets: [],
       chartOptions: {
@@ -197,12 +196,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getTodaysWeatherDetail: "getTodaysWeatherDetail",
-      getNextDaysWeatherDetail: "getNextDaysWeatherDetail",
-      getTodaySelectedWeatherDetail: "getTodaySelectedWeatherDetail",
-      getLocationInfo: "getLocationInfo",
-      getGraphLabels: "getGraphLabels",
-      getGraphDatasets: "getGraphDatasets"
+      getTodaysWeatherDetail: "weather/getTodaysWeatherDetail",
+      getNextDaysWeatherDetail: "weather/getNextDaysWeatherDetail",
+      getTodaySelectedWeatherDetail: "weather/getTodaySelectedWeatherDetail",
+      getLocationInfo: "weather/getLocationInfo",
+      getGraphLabels: "weather/getGraphLabels",
+      getGraphDatasets: "weather/getGraphDatasets"
     })
   },
   watch: {
@@ -270,9 +269,6 @@ export default {
           }
         ]
       };
-    },
-    getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
     }
   }
 };

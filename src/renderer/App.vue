@@ -9,8 +9,8 @@ const default_layout = "default";
 export default {
   name: "BreezeApp",
   mounted() {
-    this.$store.dispatch("updateTime");
-    this.$store.dispatch("updateExactlyNow");
+    this.$store.dispatch("weather/updateTime");
+    this.$store.dispatch("weather/updateExactlyNow");
   },
   computed: {
     layout() {

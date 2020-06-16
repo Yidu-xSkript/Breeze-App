@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import SplashScreen from '../components/SplashScreen.vue'
-import NoInternet from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -20,11 +19,6 @@ const routes = [
       layout: 'splash',
     }
   }
-  //  {
-  //    path: '/noInternet',
-  //    name: "NoInternet",
-  //    component: NoInternet
-  //  }
 ]
 
 const router = new VueRouter({

@@ -64,9 +64,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getTodaySelectedWeatherDetail: "getTodaySelectedWeatherDetail",
-      getLocationInfo: "getLocationInfo",
-      getExactlyNow: "getExactlyNow",
+      getTodaySelectedWeatherDetail: "weather/getTodaySelectedWeatherDetail",
+      getLocationInfo: "weather/getLocationInfo",
+      getExactlyNow: "weather/getExactlyNow",
     })
   },
   watch: {

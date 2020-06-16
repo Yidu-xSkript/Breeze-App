@@ -1,8 +1,4 @@
-// import Axios from 'axios';
-import store from '../store';
-// const checkInternetConnected = require('check-internet-connected');
 const internetAvailable = require("internet-available");
-
 
 const weatherURL = 'https://api.openweathermap.org/data/2.5';
 const appKey = '6821702d03303a2510a16c962b4b3187';
@@ -16,7 +12,6 @@ export default {
     },
     identifyNycthemeron(icon) {
         var date = icon.split(/([0-9]+)/)
-        console.log(date)
         return date[2];
     },
     createStatement(weatherId, icon) {
@@ -234,8 +229,8 @@ export default {
         const Hours = String(date.getHours()).padStart(2, '0');
         const Minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
-        const mseconds = date.getMilliseconds()
-        const formattedTime = `${Hours}:${Minutes}:${seconds}:${mseconds}`
+        const milliseconds = date.getMilliseconds()
+        const formattedTime = `${Hours}:${Minutes}:${seconds}:${milliseconds}`
         const convertedTime = this.convertTimeForLabel(formattedTime, true)
         return `${convertedTime} - ${dayName}, ${dd} ${monthName} ${year}`
     }
