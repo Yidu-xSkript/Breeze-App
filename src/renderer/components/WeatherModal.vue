@@ -2,8 +2,20 @@
   <div>
     <connection-modal></connection-modal>
 
-    <modal classes="bg-grey-darkest rounded-lg shadow-2xl" height="auto" name="weather-modal">
+    <modal
+      classes="bg-grey-darkest rounded-lg shadow-2xl"
+      :clickToClose="false"
+      height="auto"
+      name="weather-modal"
+    >
       <div class="modal w-full h-full p-10 flex items-start justify-center">
+        <div
+          class="modal-close cursor-pointer"
+          @click="hideModal"
+          v-if="this.getLocationInfo != ''"
+        >
+          <span class="close-button topright text-2xl cursor-pointer">&times;</span>
+        </div>
         <form class="w-full clickable" @submit.prevent="getWeatherData">
           <div class="flex items-center border-none py-2">
             <vue-google-autocomplete
@@ -55,14 +67,30 @@ export default {
     };
   },
   created() {
-    this.setLocation();
-    this.getWeatherData();
+    if (
+      this.getUserCurrentLocation.lat != 0 &&
+      this.getUserCurrentLocation.lng != 0
+    )
+      this.setLocation();
+    if (
+      this.getUserCurrentLocation.lat != 0 &&
+      this.getUserCurrentLocation.lng != 0
+    )
+      this.getWeatherData();
   },
   watch: {
     async getNow(val) {
       this.now = val;
-      await this.getWeatherData();
-      this.getReactiveCurrentWeatherForecast;
+      if (
+        this.getUserCurrentLocation.lat != 0 &&
+        this.getUserCurrentLocation.lng != 0
+      )
+        await this.getWeatherData();
+      if (
+        this.getUserCurrentLocation.lat != 0 &&
+        this.getUserCurrentLocation.lng != 0
+      )
+        this.getReactiveCurrentWeatherForecast;
     },
     getUserCurrentLocation(val) {
       this.lat = val.lat;
@@ -106,11 +134,14 @@ export default {
     googleAutoCompleteFocused() {
       api
         .isConnected()
-        .then()
         .catch(err => {
+          console.log(err)
           this.$modal.hide("weather-modal");
           this.$modal.show("connection-modal");
         });
+    },
+    hideModal() {
+      this.$modal.hide("weather-modal");
     },
     setLocation() {
       this.lat = this.getUserCurrentLocation.lat;

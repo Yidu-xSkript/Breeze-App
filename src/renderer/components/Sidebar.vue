@@ -2,7 +2,7 @@
   <div
     class="navigation bg-grey-darkest w-128 border-white text-white fixed min-h-screen inset-y-0 right-0"
   >
-    <div class="pb-8">
+    <div class="pb-8" style="z-index: 9999 !important; position: relative;">
       <ul class="flex justify-end">
         <li>
           <div ref="minimize" class="clickable text-white hover:bg-grey-light-op hover:text-white px-5 text-3xl">-</div>
@@ -17,7 +17,8 @@
       <div class="flex justify-between">
         <div>
           <span class="text-gray-500">Location</span> |
-          <span class="font-semibold text-base">{{ userCurrentSelectedLocation }}</span>
+          <span class="font-semibold text-base" v-if="userCurrentSelectedLocation != ''">{{ userCurrentSelectedLocation }}</span>
+          <span class="font-semibold text-base" v-else>Unknown Location</span>
         </div>
         <div>
           <button
@@ -37,64 +38,64 @@
             <div class="text-gray-600 font-semibold text-sm">Clouds</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ getTodaySelectedWeatherDetail.clouds.all }}</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ todaysSelectedWeatherDetail.clouds.all }}</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Temperature Perception</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ getTodaySelectedWeatherDetail.main.feels_like }}&#8451;</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ todaysSelectedWeatherDetail.main.feels_like }}&#8451;</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Humidity</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ getTodaySelectedWeatherDetail.main.humidity }} %</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ todaysSelectedWeatherDetail.main.humidity }} %</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Wind</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ convertSpeed(getTodaySelectedWeatherDetail.wind.speed) }} km/h</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ convertSpeed(todaysSelectedWeatherDetail.wind.speed) }} km/h</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Minimum Temperature</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ Math.round(getTodaySelectedWeatherDetail.main.temp_min) }}&#8451;</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ Math.round(todaysSelectedWeatherDetail.main.temp_min) }}&#8451;</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Maximum Temperature</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ Math.round(getTodaySelectedWeatherDetail.main.temp_max) }}&#8451;</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ Math.round(todaysSelectedWeatherDetail.main.temp_max) }}&#8451;</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Atmospheric Pressure | Sea Level</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ getTodaySelectedWeatherDetail.main.sea_level }} hPa</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ todaysSelectedWeatherDetail.main.sea_level }} hPa</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
           <div class="flex justify-between pb-2">
             <div class="text-gray-600 font-semibold text-sm">Atmospheric Pressure | Ground Level</div>
             <div
               class="font-semibold text-sm"
-              v-if="getTodaySelectedWeatherDetail"
-            >{{ getTodaySelectedWeatherDetail.main.grnd_level }} hPa</div>
+              v-if="!$isEmpty(todaysSelectedWeatherDetail)"
+            >{{ todaysSelectedWeatherDetail.main.grnd_level }} hPa</div>
             <div class="font-semibold text-sm" v-else>Unknown</div>
           </div>
         </div>
@@ -107,7 +108,7 @@
           <line-chart :chart-data="datacollection" :options="chartOptions"></line-chart>
         </div>
       </div>
-      <div class="information-booth pl-8 pr-8 pb-16 pt-8">
+      <div class="information-booth pl-8 pr-8 pb-16 pt-8" v-if="!$isEmpty(nextDaysWeatherDetail)">
         <div class="grid grid-cols-1 pb-5">
           <h3 class="font-semibold">Next Days</h3>
         </div>
@@ -202,7 +203,7 @@ export default {
       getLocationInfo: "weather/getLocationInfo",
       getGraphLabels: "weather/getGraphLabels",
       getGraphDatasets: "weather/getGraphDatasets"
-    })
+    }),
   },
   watch: {
     getGraphLabels(val) {
@@ -227,9 +228,11 @@ export default {
   },
   mounted() {
     this.nextDaysWeatherDetail = this.getNextDaysWeatherDetail;
+    this.todaysSelectedWeatherDetail = this.getTodaySelectedWeatherDetail;
     this.userCurrentSelectedLocation = this.getLocationInfo;
-    this.dataDismantling();
-    this.fillData();
+    if (this.$isEmpty(this.getTodaySelectedWeatherDetail)) this.showWeatherModal()
+    if (this.getGraphLabels.length != 0 && this.getGraphDatasets.length != 0) this.setGraphData();
+    if (this.getGraphLabels.length != 0 && this.getGraphDatasets.length != 0) this.fillData();
     this.screenContext();
   },
   methods: {
@@ -247,7 +250,7 @@ export default {
     showWeatherModal() {
       this.$modal.show("weather-modal");
     },
-    dataDismantling() {
+    setGraphData() {
       this.graphLabels = this.getGraphLabels;
       this.graphDatasets = this.getGraphDatasets;
     },

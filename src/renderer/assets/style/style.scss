@@ -83,3 +83,31 @@ body {
 .pac-container .pac-item {
   padding: theme("p-2");
 }
+
+.modal-close {
+  background-color: rgba(22, 22, 22, 0.5);
+  color: #fff;
+}
+.close-button {
+  -webkit-app-region: no-drag;
+  -webkit-user-select: none;
+  border: none;
+  display: inline-block;
+  padding: 3px 16px;
+  vertical-align: middle;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.07);
+  text-decoration: none;
+  color: inherit;
+  background-color: inherit;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.topright {
+  position: absolute;
+  right: 0;
+  top: 0;
+}

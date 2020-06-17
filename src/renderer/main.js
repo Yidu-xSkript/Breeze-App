@@ -12,7 +12,12 @@ import Pages from './components/Wrappers/cleanLayout.vue';
 Vue.use(VModal)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-Vue.http = Vue.prototype.$http = axios
+Vue.prototype.$isEmpty = function (obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
+  }
+  return true;
+}
 Vue.config.productionTip = false
 
 Vue.component('default-layout', Default);

@@ -11,19 +11,37 @@
         <h3 class="font-semibold text-white z-10 text-lg">BreezeApp &copy;</h3>
       </div>
       <div class="min-w-full">
-        <div class="grid grid-cols-1 flex justify-start">
+        <div class="grid grid-cols-1 flex justify-start" v-if="!$isEmpty(selectedWeather)">
           <img :src="iconURL" alt="ICON" class="object-contain h-20" />
         </div>
         <div class="grid grid-cols-3 flex items-stretch">
           <h1
             class="col-span-1 h-64 font-extrabold text-white text-12xl inline-block align-text-bottom p-0 m-0 self-end flex-1"
+            v-if="!$isEmpty(selectedWeather)"
           >{{ Math.round(selectedWeather.main.temp) }}&#176;</h1>
+          <h1
+            class="col-span-1 h-64 font-extrabold text-white text-12xl inline-block align-text-bottom p-0 m-0 self-end flex-1"
+            v-else
+          >0 &#176;</h1>
           <div class="col-span-2 z-10 self-end flex-1">
             <p
               class="bg-white font-bold text-black w-48 p-2 text-xl rounded has-shadow"
+              v-if="!$isEmpty(selectedWeather)"
             >{{ selectedWeather.weather[0].description }}</p>
-            <p class="font-semibold text-white text-4xl">It's a {{ statement.dayStatus }}</p>
-            <p class="font-light text-white text-2xl">{{ statement.motto }}</p>
+            <p
+              class="bg-white font-bold text-black w-48 p-2 text-xl rounded has-shadow"
+              v-else
+            >(Unknown description)</p>
+            <p
+              class="font-semibold text-white text-4xl"
+              v-if="!$isEmpty(selectedWeather)"
+            >It's a {{ statement.dayStatus }}</p>
+            <p class="font-semibold text-white text-4xl" v-else>(Unknown day Status)</p>
+            <p
+              class="font-light text-white text-2xl"
+              v-if="!$isEmpty(selectedWeather)"
+            >{{ statement.motto }}</p>
+            <p class="font-light text-white text-2xl" v-else>(Motto not configured)</p>
           </div>
         </div>
         <div class="divider pt-16 z-10"></div>
@@ -32,7 +50,11 @@
             <span class="font-semibold text-sm text-white">{{ currentDate }}</span>
           </div>
           <div>
-            <span class="font-semibold text-white text-base pr-4">{{ location }}</span>
+            <span
+              class="font-semibold text-white text-base pr-4"
+              v-if="location != ''"
+            >{{ location }}</span>
+            <span class="font-semibold text-white text-base pr-4" v-else>Unknown location</span>
             <button
               @click="showWeatherModal"
               class="clickable bg-transparent text-white font-semibold text-xs py-1 px-5 border border-gray-700 rounded hover:bg-white hover:text-black focus:outline-none hover:border-transparent"
@@ -66,7 +88,7 @@ export default {
     ...mapGetters({
       getTodaySelectedWeatherDetail: "weather/getTodaySelectedWeatherDetail",
       getLocationInfo: "weather/getLocationInfo",
-      getExactlyNow: "weather/getExactlyNow",
+      getExactlyNow: "weather/getExactlyNow"
     })
   },
   watch: {
@@ -93,7 +115,7 @@ export default {
   created() {
     this.currentDate = api.convertDateAndTime();
     this.setSelectedWeather();
-    this.setLocation();
+    if (this.getLocationInfo != "") this.setLocation();
   },
   methods: {
     setLocation() {
@@ -109,18 +131,14 @@ export default {
     },
     setVideo() {
       this.$nextTick(() => {
-        this.$refs.videoRef.src = this._statement().video;
+        if (!this.$isEmpty(this.getTodaySelectedWeatherDetail))
+          this.$refs.videoRef.src = this._statement().video;
+        else this.$refs.videoRef.src = `${__dirname}/../assets/video/rain.mp4`;
         this.$refs.videoRef.play();
       });
     },
-    isEmpty(obj) {
-      for (var key in obj) {
-        if (this.hasOwnProperty(key)) return false;
-      }
-      return true;
-    },
     _statement(val = {}) {
-      return this.isEmpty(val)
+      return this.$isEmpty(val)
         ? api.createStatement(
             this.getTodaySelectedWeatherDetail.weather[0].id,
             this.getTodaySelectedWeatherDetail.weather[0].icon
@@ -129,10 +147,12 @@ export default {
     },
     setSelectedWeather() {
       this.selectedWeather = this.getTodaySelectedWeatherDetail;
-      this.setIcon();
       this.setVideo();
-      this.statement.motto = this._statement().motto;
-      this.statement.dayStatus = this._statement().dayStatus;
+      if (!this.$isEmpty(this.getTodaySelectedWeatherDetail)) {
+        this.setIcon();
+        this.statement.motto = this._statement().motto;
+        this.statement.dayStatus = this._statement().dayStatus;
+      }
     }
   }
 };

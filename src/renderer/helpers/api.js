@@ -207,17 +207,16 @@ export default {
     },
     getReactiveCurrentWeatherForecast(now, todaysWeatherData = []) {
         return new Promise(async resolve => {
-            var todaysWeatherStringTimeData = await this.checkWeatherTime(now, todaysWeatherData);
-            var minimumKeyOfValue = await this.minValFromObject(todaysWeatherStringTimeData)
-            var selectedWeather = this.groupWeatherByDate(todaysWeatherData, false, true).get(minimumKeyOfValue[0])
-            resolve(selectedWeather[0])
+            if (todaysWeatherData.length > 0) {
+                var todaysWeatherStringTimeData = await this.checkWeatherTime(now, todaysWeatherData);
+                var minimumKeyOfValue = await this.minValFromObject(todaysWeatherStringTimeData)
+                var selectedWeather = this.groupWeatherByDate(todaysWeatherData, false, true).get(minimumKeyOfValue[0])
+                resolve(selectedWeather[0])
+            }
         });
     },
-    async isConnected() {
-        return await internetAvailable({
-            timeout: 4000,
-            retries: 10,
-        });
+    isConnected() {
+        return internetAvailable();
     },
     convertDateAndTime(date = new Date()) {
         const year = date.getFullYear();
