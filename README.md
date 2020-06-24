@@ -1,6 +1,7 @@
-# breezeapp
+# Breeze-App
 
-> BreezeApp is a weather app created just for fun - VueJs, vuex, Electron and Tailwind
+Breeze App is a weather desktop app designed and developed using VueJs, VueX, Tailwind and ElectronJs. 
+> Created By xSkript
 
 #### Build Setup
 
